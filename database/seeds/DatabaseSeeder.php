@@ -14,7 +14,13 @@ class DatabaseSeeder extends Seeder {
 	{
 		//Model::unguard();
 
-		/*App\User::create([
+		App\User::create([
+			'name' => 'Admin',
+			'email' => 'admin@gmail.com',
+			'password' => bcrypt('1234'),
+		]);
+
+		App\User::create([
 			'name' => 'Jeff',
 			'email' => 'Jeff@gmail.com',
 			'password' => bcrypt('134679'),
@@ -42,7 +48,7 @@ class DatabaseSeeder extends Seeder {
 			'name' => 'Kie',
 			'email' => 'Kie@gmail.com',
 			'password' => bcrypt('134679'),
-		]);*/
+		]);
 	}
 
 }

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeesTable extends Migration {
+class CreatePatientDataTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,14 @@ class CreateEmployeesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('employees', function(Blueprint $table)
+		Schema::create('patient_data', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->string('bp');
+			$table->string('fbs');
+			$table->text('suggestion');
+			$table->integer('user_id')->unsigned();
+			$table->foreign('user_id')->references('id')->on('users');
 			$table->timestamps();
 		});
 	}
@@ -26,7 +31,7 @@ class CreateEmployeesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('employees');
+		Schema::drop('patient_data');
 	}
 
 }
