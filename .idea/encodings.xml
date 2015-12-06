@@ -6,7 +6,9 @@
     <file url="file://$PROJECT_DIR$/app/Services/Factory/LevelPatient.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/Services/Factory/LevelPatientFactory.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/Services/Strategy/OperationCheck.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/Services/Suggestion.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/resources/views/app/h-fbs/admin.blade.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/resources/views/app/h-fbs/adminwithpatient.blade.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/resources/views/app/h-fbs/patient.blade.php" charset="UTF-8" />
   </component>
 </project>

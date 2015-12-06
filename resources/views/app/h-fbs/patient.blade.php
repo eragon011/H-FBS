@@ -8,7 +8,25 @@
 
 @extends('app')
 @section('content')
-    patient
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <?php echo $level;?>
+
+        </div>
+        <br/>
+        <div class="col-md-6 col-md-offset-3 text-center">
+            <h1>{{ $user->name }}</h1>
+        </div>
+    </div>
+    <hr>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <h3>คำแนะนำ</h3>
+        <p> {{ $user->patient->suggestion }} </p>
+
+
+    </div>
+</div>
 @stop
 
 @section('javascript')

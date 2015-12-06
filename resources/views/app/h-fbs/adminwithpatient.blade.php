@@ -32,8 +32,11 @@
 
 
             <div class="form-group">
+
+
                 <label for="suggestion">คำแนะนำ:</label>
                 <textarea class="form-control" rows="5" id="suggestion" name="suggestion">{{$user->patient->suggestion}}</textarea>
+                <input type="checkbox" name="syssuggestion" value="1" > ใช้คำแนะนำของระบบ:
             </div>
             <a href="{{\URL::to('app/h-fbs/admin/')}}">
                 <button type="button" class="btn btn-danger">ย้อนกลับ</button></a>
