@@ -38,7 +38,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		*/
 	 public function isAdmin($name)
 	 {
-			 if($name == "Admin"){
+			 if($name == "admin"){
 				 return true;
 			 }
 			 return false;
