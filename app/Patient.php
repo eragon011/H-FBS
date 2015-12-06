@@ -11,4 +11,9 @@ class Patient extends Model {
      */
     protected $table = 'patient_data';
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
 }

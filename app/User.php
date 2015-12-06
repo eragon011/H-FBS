@@ -38,7 +38,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		*/
 	 public function isAdmin($name)
 	 {
-			 if($name == "admin"){
+			 if($name == "Admin"){
 				 return true;
 			 }
 			 return false;
@@ -46,11 +46,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function isPatient($name)
 	{
-		if($name != "admin"){
+		if($name != "Admin"){
 			return true;
 		}
 
 		return false;
+	}
+
+	public function patient()
+	{
+		return $this->hasOne('App\Patient');
 	}
 
 }
