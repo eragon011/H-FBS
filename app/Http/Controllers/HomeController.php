@@ -30,7 +30,17 @@ class HomeController extends Controller {
 	 */
 	public function index()
 	{
-		return view('home');
+		//return view('home');
+		if(\Auth::user()->isAdmin(\Auth::user()->name)){
+			return redirect()->action('App\AppController@admin');
+		}else if(\Auth::user()->isPatient(\Auth::user()->name)){
+			return redirect()->action('App\AppController@patient');
+		}else{
+			return redirect('auth/login');
+		}
 	}
+
+
+
 
 }
