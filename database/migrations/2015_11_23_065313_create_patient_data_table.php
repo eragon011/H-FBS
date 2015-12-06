@@ -18,6 +18,7 @@ class CreatePatientDataTable extends Migration {
 			$table->string('bp');
 			$table->string('fbs');
 			$table->text('suggestion');
+			$table->boolean('complication');
 			$table->integer('user_id')->unsigned();
 			$table->foreign('user_id')->references('id')->on('users');
 			$table->timestamps();

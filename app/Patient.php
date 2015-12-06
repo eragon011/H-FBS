@@ -11,6 +11,8 @@ class Patient extends Model {
      */
     protected $table = 'patient_data';
 
+    protected $fillable = ['bp', 'fbs', 'suggestion'];
+
     public function user()
     {
         return $this->belongsTo('App\User');
