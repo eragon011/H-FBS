@@ -27,6 +27,8 @@ Route::group(['prefix' => 'app','middleware'=>'auth'], function()
   {
     Route::get('index','App\AppController@index');
     Route::get('admin','App\AppController@admin');
+    Route::get('admin/{id}','App\AppController@adminWithPatient');
+    Route::post('admin/{id}/update','App\AppController@update');
     Route::get('patient','App\AppController@patient');
   });
 
