@@ -39,15 +39,36 @@ class AppController extends Controller
 
     public function adminWithPatient($id)
     {
-        $user = User::find($id);
-        $sd = explode ("/", $user->patient->bp);
 
-        $context = new Context(new OperationCheck());
-        $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1],$user->patient->complication);
+        try
+        {
+            $user = User::find($id);
+            $sd = explode ("/", $user->patient->bp);
+            $context = new Context(new OperationCheck());
+            $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1],$user->patient->complication);
 
-        $level = new LevelPatientFactory();
-        $level =  $level->getLevelPatient($levelText);
-        return view('app/h-fbs/adminwithpatient')->with(['user'=>$user])->with(['level'=>$level->draw()]);
+            $level = new LevelPatientFactory();
+            $level =  $level->getLevelPatient($levelText);
+            return view('app/h-fbs/adminwithpatient')->with(['user'=>$user])->with(['level'=>$level->draw()]);
+
+        }catch (\Exception $e){
+            $patient = new patient();
+            $patient->bp = "0/0";
+            $patient->fbs = "0";
+            $patient->suggestion = "0";
+            $patient->complication = "0";
+            $patient->user_id = $id;
+            $patient->save();
+
+            return redirect('app/h-fbs/admin/'.$id);
+
+        }
+
+
+
+
+
+
     }
 
     public function patient()    {
@@ -123,14 +144,10 @@ class AppController extends Controller
             $user->suggestion = $request->input('suggestion');
             $user->complication = $request->input('complication');
             $user->save();
-        }else{
-            $user = new Patient();
-            $user->bp = $request->input('bp');
-            $user->fbs = $request->input('fbs');
-            $user->suggestion = $request->input('suggestion');
-            $user->complication = $request->input('complication');
-            $user->save();
+
         }
+
+        return redirect('app/h-fbs/admin/'.$id);
 
     }
 
