@@ -6,7 +6,7 @@ use App\Patient;
 use App\Services\Strategy\Context;
 use App\Services\Factory\LevelPatientFactory;
 use App\Services\Factory\LevelPatient;
-
+use App\Services\Suggestion;
 use App\Services\Strategy\OperationCheck;
 use App\User;
 use Illuminate\Http\Request;
@@ -33,34 +33,51 @@ class AppController extends Controller
     public function admin()
     {
         $patients = User::where('name', '!=', 'Admin')->get();
-        return view('app/h-fbs/admin')->with(['patients'=>$patients]);
+        return view('app/h-fbs/admin')->with(['patients' => $patients]);
         //return view('app/h-fbs/admin');
     }
 
     public function adminWithPatient($id)
     {
-        $user = User::find($id);
-        $sd = explode ("/", $user->patient->bp);
 
-        $context = new Context(new OperationCheck());
-        $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1],$user->patient->complication);
+        try {
+            $user = User::find($id);
+            $sd = explode("/", $user->patient->bp);
+            $context = new Context(new OperationCheck());
+            $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1], $user->patient->complication);
 
-        $level = new LevelPatientFactory();
-        $level =  $level->getLevelPatient($levelText);
-        return view('app/h-fbs/adminwithpatient')->with(['user'=>$user])->with(['level'=>$level->draw()]);
+            $level = new LevelPatientFactory();
+            $level = $level->getLevelPatient($levelText);
+            return view('app/h-fbs/adminwithpatient')->with(['user' => $user])->with(['level' => $level->draw()]);
+
+        } catch (\Exception $e) {
+            $patient = new patient();
+            $patient->bp = "0/0";
+            $patient->fbs = "0";
+            $patient->suggestion = "0";
+            $patient->complication = "0";
+            $patient->user_id = $id;
+            $patient->save();
+
+            return redirect('app/h-fbs/admin/' . $id);
+
+        }
+
+
     }
 
-    public function patient()    {
+    public function patient()
+    {
 
         $user = User::find(\Auth::user()->id);
-        $sd = explode ("/", $user->patient->bp);
+        $sd = explode("/", $user->patient->bp);
 
         $context = new Context(new OperationCheck());
-        $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1],$user->patient->complication);
+        $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1], $user->patient->complication);
 
         $level = new LevelPatientFactory();
-        $level =  $level->getLevelPatient($levelText);
-        return view('app/h-fbs/patient')->with(['user'=>$user])->with(['$level'=>$level->draw()]);
+        $level = $level->getLevelPatient($levelText);
+        return view('app/h-fbs/patient')->with(['user' => $user])->with(['level' => $level->draw()]);
 
     }
 
@@ -112,25 +129,36 @@ class AppController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $use = User::find($id);
 
-        if($use->patient->id){
+        if ($use->patient->id) {
             $user = Patient::find($use->patient->id);
             $user->bp = $request->input('bp');
             $user->fbs = $request->input('fbs');
-            $user->suggestion = $request->input('suggestion');
             $user->complication = $request->input('complication');
+            if ($request->input('syssuggestion')) {
+
+                $sd = explode("/", $user->bp);
+
+                $context = new Context(new OperationCheck());
+                $levelText = $context->executeStrategy($user->fbs, $sd[0], $sd[1], $user->complication);
+
+
+                $user->suggestion = Suggestion::getSuggestion($levelText);
+
+
+            } else {
+                $user->suggestion = $request->input('suggestion');
+            }
+
+
             $user->save();
-        }else{
-            $user = new Patient();
-            $user->bp = $request->input('bp');
-            $user->fbs = $request->input('fbs');
-            $user->suggestion = $request->input('suggestion');
-            $user->complication = $request->input('complication');
-            $user->save();
+
         }
+
+        return redirect('app/h-fbs/admin/' . $id);
 
     }
 
