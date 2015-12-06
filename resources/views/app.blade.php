@@ -40,8 +40,8 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">App<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								<li>
-									<a href="{{\URL::to('app/handlebars/main')}}">
-										<i class="fa fa-folder"></i></span> Handlebars
+									<a href="{{\URL::to('app/h-fbs/index')}}">
+										<i class="fa fa-folder"></i></span> H-FBS
 									</a>
 								</li>
 							</ul>
