@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+
 use Illuminate\Http\Request;
 
 class AppController extends Controller {
@@ -14,7 +15,23 @@ class AppController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		if(\Auth::user()->isAdmin(\Auth::user()->name)){
+			return redirect()->action('App\AppController@admin');
+		}else if(\Auth::user()->isPatient(\Auth::user()->name)){
+			return redirect()->action('App\AppController@patient');
+		}else{
+			return redirect('auth/login');
+		}
+	}
+
+	public function admin()
+	{
+		return view('app/h-fbs/admin');
+	}
+
+	public function patient()
+	{
+		return view('app/h-fbs/patient');
 	}
 
 	/**

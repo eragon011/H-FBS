@@ -23,6 +23,13 @@ Route::group(['prefix' => 'app','middleware'=>'auth'], function()
     Route::get('get',"App\handlebarsController@getData");
   });
 
+  Route::group(['prefix' => 'h-fbs'], function()
+  {
+    Route::get('index','App\AppController@index');
+    Route::get('admin','App\AppController@admin');
+    Route::get('patient','App\AppController@patient');
+  });
+
 });
 
 Route::controllers([
