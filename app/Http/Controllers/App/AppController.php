@@ -32,8 +32,14 @@ class AppController extends Controller
 
     public function admin()
     {
-        $patients = User::where('name', '!=', 'Admin')->get();
-        return view('app/h-fbs/admin')->with(['patients' => $patients]);
+
+        if(\Auth::user()->isAdmin(\Auth::user()->name)){
+            $patients = User::where('name', '!=', 'Admin')->get();
+            return view('app/h-fbs/admin')->with(['patients' => $patients]);
+        }else{
+            return redirect()->action('App\AppController@index');
+        }
+
         //return view('app/h-fbs/admin');
     }
 
@@ -42,13 +48,15 @@ class AppController extends Controller
 
         try {
             $user = User::find($id);
-            $sd = explode("/", $user->patient->bp);
+            $bp = explode("/", $user->patient->bp);
             $context = new Context(new OperationCheck());
-            $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1], $user->patient->complication);
+            $levelText = $context->executeStrategy($user->patient->fbs, $bp[0], $bp[1], $user->patient->complication);
 
             $level = new LevelPatientFactory();
             $level = $level->getLevelPatient($levelText);
-            return view('app/h-fbs/adminwithpatient')->with(['user' => $user])->with(['level' => $level->draw()]);
+            return view('app/h-fbs/adminwithpatient')
+                ->with(['user' => $user])
+                ->with(['level' => $level->draw()]);
 
         } catch (\Exception $e) {
             $patient = new patient();
@@ -60,7 +68,6 @@ class AppController extends Controller
             $patient->save();
 
             return redirect('app/h-fbs/admin/' . $id);
-
         }
 
 
@@ -69,15 +76,35 @@ class AppController extends Controller
     public function patient()
     {
 
-        $user = User::find(\Auth::user()->id);
-        $sd = explode("/", $user->patient->bp);
 
-        $context = new Context(new OperationCheck());
-        $levelText = $context->executeStrategy($user->patient->fbs, $sd[0], $sd[1], $user->patient->complication);
+        try {
+            $user = User::find(\Auth::user()->id);
+            $bp = explode("/", $user->patient->bp);
 
-        $level = new LevelPatientFactory();
-        $level = $level->getLevelPatient($levelText);
-        return view('app/h-fbs/patient')->with(['user' => $user])->with(['level' => $level->draw()]);
+            $context = new Context(new OperationCheck());
+            $levelText = $context->executeStrategy($user->patient->fbs, $bp[0], $bp[1], $user->patient->complication);
+
+            $level = new LevelPatientFactory();
+            $level = $level->getLevelPatient($levelText);
+
+            return view('app/h-fbs/patient')
+                ->with(['user' => $user])
+                ->with(['level' => $level->draw()])
+                ->with(["levelMessege"=>$levelText]);
+
+        } catch (\Exception $e) {
+            $patient = new patient();
+            $patient->bp = "0/0";
+            $patient->fbs = "0";
+            $patient->suggestion = "0";
+            $patient->complication = "0";
+            $patient->user_id = \Auth::user()->id;
+            $patient->save();
+
+            return redirect('app/h-fbs/patient/');
+        }
+
+
 
     }
 
@@ -128,6 +155,8 @@ class AppController extends Controller
      *
      * @param  int $id
      * @return Response
+     *
+     *
      */
     public function update(Request $request, $id)
     {
@@ -138,12 +167,13 @@ class AppController extends Controller
             $user->bp = $request->input('bp');
             $user->fbs = $request->input('fbs');
             $user->complication = $request->input('complication');
+
             if ($request->input('syssuggestion')) {
 
-                $sd = explode("/", $user->bp);
+                $bp = explode("/", $user->bp);
 
                 $context = new Context(new OperationCheck());
-                $levelText = $context->executeStrategy($user->fbs, $sd[0], $sd[1], $user->complication);
+                $levelText = $context->executeStrategy($user->fbs, $bp[0], $bp[1], $user->complication);
 
 
                 $user->suggestion = Suggestion::getSuggestion($levelText);
